@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme: indigo + black with a teal tint -->
+    <color name="indigo">#3F3FBF</color>
+    <color name="indigo_dark">#1E1B4B</color>
+    <color name="indigo_mid">#2B2B7A</color>
+    <color name="black_bg">#0A0A10</color>
+    <color name="card_surface">#14141F</color>
+    <color name="teal_accent">#2DD4BF</color>
+    <color name="text_primary">#F1F5F9</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="warning_amber">#FBBF24</color>
+    <color name="error_red">#F87171</color>
+    <color name="outline_grey">#475569</color>
+</resources>
