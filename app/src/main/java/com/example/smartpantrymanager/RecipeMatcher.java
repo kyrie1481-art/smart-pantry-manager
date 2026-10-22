@@ -48,6 +48,31 @@ public class RecipeMatcher {
         return true;
     }
 
+    /**
+     * BONUS "Almost There" list: recipes that are missing EXACTLY ONE ingredient.
+     * These are never mixed into the strict suggestions; the screen shows them separately.
+     */
+    public static List<Recipe> getAlmostThereRecipes(List<Recipe> recipes, List<PantryItem> pantry) {
+        List<Recipe> almost = new ArrayList<>();
+        for (Recipe recipe : recipes) {
+            if (getMissingIngredients(recipe, pantry).size() == 1) {
+                almost.add(recipe);
+            }
+        }
+        return almost;
+    }
+
+    /** The names of the ingredients of this recipe that the pantry cannot cover. */
+    public static List<String> getMissingIngredients(Recipe recipe, List<PantryItem> pantry) {
+        List<String> missing = new ArrayList<>();
+        for (RecipeIngredient needed : recipe.getIngredients()) {
+            if (!hasEnough(needed, pantry)) {
+                missing.add(needed.getName());
+            }
+        }
+        return missing;
+    }
+
     /** Checks one recipe ingredient against the whole pantry. */
     private static boolean hasEnough(RecipeIngredient needed, List<PantryItem> pantry) {
         String neededName = normalizeName(needed.getName());
