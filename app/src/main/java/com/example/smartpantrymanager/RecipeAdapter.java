@@ -6,11 +6,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Map;
 
-/** Custom adapter: shows each suggested recipe as a card. */
+/** Custom adapter: shows each recipe as a card. */
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     public interface OnRecipeClickListener {
@@ -20,13 +22,23 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private List<Recipe> recipes;
     private final OnRecipeClickListener listener;
 
+    // Only used by the "Almost there" list: recipe id -> name of the one missing ingredient
+    private Map<Integer, String> missingNotes = null;
+
     public RecipeAdapter(List<Recipe> recipes, OnRecipeClickListener listener) {
         this.recipes = recipes;
         this.listener = listener;
     }
 
+    /** Normal (strict) list: every ingredient is available. */
     public void setRecipes(List<Recipe> newRecipes) {
+        setRecipes(newRecipes, null);
+    }
+
+    /** List with an optional "Missing: ..." note per recipe (used by the Almost there tab). */
+    public void setRecipes(List<Recipe> newRecipes, Map<Integer, String> notes) {
         this.recipes = newRecipes;
+        this.missingNotes = notes;
         notifyDataSetChanged();
     }
 
@@ -43,7 +55,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         final Recipe recipe = recipes.get(position);
 
         holder.tvName.setText(recipe.getName());
-        holder.tvCount.setText(recipe.getIngredients().size() + " ingredients - you have them all");
+
+        // Second line: either "you have them all" or which ingredient is missing
+        int teal = ContextCompat.getColor(holder.itemView.getContext(), R.color.teal_accent);
+        int amber = ContextCompat.getColor(holder.itemView.getContext(), R.color.warning_amber);
+        if (missingNotes != null && missingNotes.containsKey(recipe.getId())) {
+            holder.tvCount.setText("Missing: " + missingNotes.get(recipe.getId()));
+            holder.tvCount.setTextColor(amber);
+        } else {
+            holder.tvCount.setText(recipe.getIngredients().size() + " ingredients - you have them all");
+            holder.tvCount.setTextColor(teal);
+        }
 
         // Short preview of the ingredient names, e.g. "egg, butter, salt"
         StringBuilder preview = new StringBuilder();
